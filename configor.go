@@ -110,6 +110,28 @@ func (configor *Configor) Load(config interface{}, files ...string) (err error) 
 	return
 }
 
+// Save will save the configurations to a file name you provide
+func Save(config interface{}, filename string) error {
+	var js []byte
+	var err error
+
+	switch {
+	case strings.HasSuffix(filename, ".yaml") || strings.HasSuffix(filename, ".yml"):
+		js, err = yaml.Marshal(&config)
+	case strings.HasSuffix(filename, ".json"):
+		js, err = json.Marshal(&config)
+	default:
+		return errors.New("Unknown file type")
+	}
+
+	if err != nil {
+		return nil
+	}
+
+	err = ioutil.WriteFile(filename, js, 0600)
+	return err
+}
+
 // ENV return environment
 func ENV() string {
 	return New(nil).GetEnvironment()
